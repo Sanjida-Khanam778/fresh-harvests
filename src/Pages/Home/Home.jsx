@@ -4,6 +4,7 @@ import Banner from "../../components/Banner/Banner";
 import Products from "../../components/Products/Products";
 import About from "../../components/About/About";
 import Offer from "../../components/Offer/Offer";
+import Testimonials from "../../components/Testimonial/Testimonials";
 
 export default function Home() {
   return (
@@ -13,7 +14,7 @@ export default function Home() {
       <Products />
       <About />
       <Offer />
-      {/* <Testimonial /> */}
+      <Testimonials />
     </div>
   );
 }
