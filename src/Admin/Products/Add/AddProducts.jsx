@@ -27,7 +27,7 @@ export default function AddProducts() {
       price: parseFloat(formData.get("price")),
       stock: parseInt(formData.get("stock")),
       categoryId: formData.get("category"),
-      images: imageUrls.filter(url => url.trim() !== ""),
+      images: imageUrls.filter((url) => url.trim() !== ""),
     };
 
     try {

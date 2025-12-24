@@ -9,9 +9,9 @@ import {
 import logo from "../../assets/images/logo.png";
 import googleplay from "../../assets/images/googleplay.png";
 import appstore from "../../assets/images/appstore.png";
-import Visa from "../../assets/images/Visa.png";
-import Paypal from "../../assets/images/Paypal.png";
-import Applepay from "../../assets/images/Applepay.png";
+import one from "../../assets/images/one.png";
+import pay from "../../assets/images/pay.png";
+import apple from "../../assets/images/apple.png";
 import first from "../../assets/images/1.png";
 import second from "../../assets/images/2.png";
 import third from "../../assets/images/3.png";
@@ -157,19 +157,19 @@ export default function Footer() {
               </h4>
               <div className="flex items-center gap-3">
                 <img
-                  src={Visa}
-                  alt="Visa"
+                  src={one}
+                  alt="one"
               
                   className=" w-auto"
                 />
                 <img
-                  src={Paypal}
-                  alt="PayPal"
+                  src={pay}
+                  alt="pay"
               
                   className=" w-auto"
                 />
                 <img
-                  src={Applepay}
+                  src={apple}
                   alt="Apple Pay"
               
                   className=" w-auto"
