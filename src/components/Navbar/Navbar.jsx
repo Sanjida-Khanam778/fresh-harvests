@@ -69,6 +69,8 @@ const Navbar = ({ activeNav, setActiveNav }) => {
     setActiveNav(item);
     if (item === "Home") {
       navigate("/");
+    } else if (item === "Shop") {
+      navigate("/shop");
     }
   };
 

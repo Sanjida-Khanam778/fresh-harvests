@@ -14,9 +14,11 @@ export default function ProductDetails() {
   const product = data?.data;
   const productImages = product?.images || [];
   const reviews = product?.reviews || [];
-  const averageRating = reviews.length > 0 
-    ? reviews.reduce((sum, review) => sum + (review.rating || 0), 0) / reviews.length 
-    : 0;
+  const averageRating =
+    reviews.length > 0
+      ? reviews.reduce((sum, review) => sum + (review.rating || 0), 0) /
+        reviews.length
+      : 0;
 
   useEffect(() => {
     if (productImages.length > 0) {
@@ -27,9 +29,12 @@ export default function ProductDetails() {
     }
   }, [productImages.length]);
 
-  if (isLoading) return <div className="text-center py-16">Loading product...</div>;
-  if (error) return <div className="text-center py-16">Error loading product</div>;
-  if (!product) return <div className="text-center py-16">Product not found</div>;
+  if (isLoading)
+    return <div className="text-center py-16">Loading product...</div>;
+  if (error)
+    return <div className="text-center py-16">Error loading product</div>;
+  if (!product)
+    return <div className="text-center py-16">Product not found</div>;
 
   const decreaseQuantity = () => {
     if (quantity > 1) {
@@ -75,14 +80,20 @@ export default function ProductDetails() {
             <span className="text-primary bg-primary/10 px-4 py-1 rounded-lg font-medium text-sm w-fit">
               {product.category.categoryName}
             </span>
-            <h1 className="text-4xl font-bold text-gray-900 my-3">{product.productName}</h1>
+            <h1 className="text-4xl font-bold text-gray-900 my-3">
+              {product.productName}
+            </h1>
             {/* Rating */}
             <div className="flex items-center gap-2 mb-3">
               <div className="flex">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <svg
                     key={star}
-                    className={`w-5 h-5 ${star <= averageRating ? 'fill-orange-400' : 'fill-gray-300'}`}
+                    className={`w-5 h-5 ${
+                      star <= averageRating
+                        ? "fill-orange-400"
+                        : "fill-gray-300"
+                    }`}
                     viewBox="0 0 20 20"
                   >
                     <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
@@ -90,10 +101,13 @@ export default function ProductDetails() {
                 ))}
               </div>
               <span className="text-sm font-medium text-gray-900">
-                {averageRating.toFixed(1)} ({reviews.length} review{reviews.length !== 1 ? 's' : ''})
+                {averageRating.toFixed(1)} ({reviews.length} review
+                {reviews.length !== 1 ? "s" : ""})
               </span>
             </div>
-            <p className="text-3xl font-bold text-orange-500 mb-4">${product.price}/kg</p>
+            <p className="text-3xl font-bold text-orange-500 mb-4">
+              ${product.price}/kg
+            </p>
             <p className="text-gray-600 leading-relaxed mb-6">
               {product.description}
             </p>

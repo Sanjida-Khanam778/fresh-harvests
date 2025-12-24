@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useGetProductsQuery } from "../../Api/api";
 
-export default function Products() {
+export default function Shop() {
   const [activeCategory, setActiveCategory] = useState("All");
   const { data, error, isLoading } = useGetProductsQuery();
 
@@ -17,16 +17,14 @@ export default function Products() {
 
   const filteredProducts =
     activeCategory === "All"
-      ? products.slice(0, 8) // Limit to 8 products
-      : products
-          .filter((product) => {
-            const catName = product.category.categoryName.toLowerCase();
-            if (activeCategory === "Fruits") return catName === "fruits";
-            if (activeCategory === "Vegetables") return catName === "vegetable";
-            if (activeCategory === "Salad") return catName === "salad";
-            return false;
-          })
-          .slice(0, 8); // Also limit filtered products to 8
+      ? products
+      : products.filter((product) => {
+          const catName = product.category.categoryName.toLowerCase();
+          if (activeCategory === "Fruits") return catName === "fruits";
+          if (activeCategory === "Vegetables") return catName === "vegetable";
+          if (activeCategory === "Salad") return catName === "salad";
+          return false;
+        });
 
   return (
     <section className="w-full py-16 px-4 bg-white">
@@ -34,14 +32,14 @@ export default function Products() {
         {/* Header */}
         <div className="text-center mb-12">
           <span className="text-primary bg-primary/10 px-4 py-1 rounded-lg font-medium text-sm w-fit">
-            Our Products
+            Our Shop
           </span>
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Our Fresh Products
+            All Our Products
           </h2>
           <p className="text-gray-600 text-sm">
-            We pride ourselves on offering a wide variety of fresh and flavorful
-            fruits, vegetables, and salad ingredients.
+            Browse our complete collection of fresh and flavorful fruits,
+            vegetables, and salad ingredients.
           </p>
         </div>
 
@@ -63,7 +61,7 @@ export default function Products() {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {filteredProducts.map((product) => (
             <Link
               key={product.id}
@@ -98,16 +96,6 @@ export default function Products() {
               </button>
             </Link>
           ))}
-        </div>
-
-        {/* See All Products Button */}
-        <div className="flex justify-center">
-          <Link
-            to="/shop"
-            className="px-8 py-3 border-2 border-orange-500 text-orange-500 rounded font-medium hover:bg-orange-500 hover:text-white transition-colors"
-          >
-            See All Products
-          </Link>
         </div>
       </div>
     </section>
