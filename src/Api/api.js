@@ -38,7 +38,11 @@ export const api = createApi({
         body: userData,
       }),
     }),
+    getUsers: builder.query({
+      query: () => "users",
+      providesTags: ["users"],
+    }),
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation } = api;
+export const { useLoginMutation, useRegisterMutation, useGetUsersQuery } = api;
