@@ -91,7 +91,7 @@ export default function Testimonials() {
               onClick={() => handleDotClick(index)}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${
                 index === currentIndex
-                  ? "bg-green"
+                  ? "bg-primary"
                   : "bg-gray-300 hover:bg-gray-400"
               }`}
               aria-label={`Go to testimonial ${index + 1}`}
