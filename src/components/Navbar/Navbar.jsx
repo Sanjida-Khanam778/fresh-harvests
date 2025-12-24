@@ -1,7 +1,7 @@
 import { Eye, EyeOff, X, Loader2, Menu } from "lucide-react";
 import logo from "../../assets/images/navlogo.png";
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useLoginMutation, useRegisterMutation } from "../../Api/api";
 import { useSelector, useDispatch } from "react-redux";
 import { login, logout } from "../../Stores/authSlice";
@@ -103,10 +103,11 @@ const Navbar = ({ activeNav, setActiveNav }) => {
     <nav className="py-8 z-50">
       <div className="w-10/12 mx-auto flex items-center justify-between">
         {/* Logo */}
+      <Link to="/">
         <div className="flex items-center gap-2">
           <img src={logo} className="h-8" alt="" />
         </div>
-
+      </Link>
         {/* Center Navigation */}
         <div className="hidden md:flex items-center gap-8">
           {navItems.map((item) => (

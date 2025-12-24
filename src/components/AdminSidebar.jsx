@@ -29,9 +29,11 @@ export default function AdminSidebar() {
 
   return (
     <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-10">
-      <div className="p-8">
-        <img src={logo} alt="" />
-      </div>
+      <Link to="/">
+        <div className="p-8">
+          <img src={logo} alt="" />
+        </div>
+      </Link>
 
       <nav className="mt-8">
         <div className="px-4">
