@@ -1,15 +1,16 @@
-import { Eye, EyeOff, X } from "lucide-react";
+import { Eye, EyeOff, X, Loader2 } from "lucide-react";
 import logo from "../../assets/images/navlogo.png";
 import { useState } from "react";
 import { useLoginMutation, useRegisterMutation } from "../../Api/api";
+import toast from "react-hot-toast";
 const Navbar = ({ activeNav, setActiveNav }) => {
   const navItems = ["Home", "Shop", "About Us", "Blog"];
   const [signInOpen, setSignInOpen] = useState(false);
   const [signUpOpen, setSignUpOpen] = useState(false);
   const [showSignInPassword, setShowSignInPassword] = useState(false);
   const [showSignUpPassword, setShowSignUpPassword] = useState(false);
-  const [login] = useLoginMutation();
-  const [registerUser] = useRegisterMutation();
+  const [login, { isLoading: loginLoading }] = useLoginMutation();
+  const [registerUser, { isLoading: registerLoading }] = useRegisterMutation();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -28,13 +29,13 @@ const Navbar = ({ activeNav, setActiveNav }) => {
             JSON.stringify({ access: result.data.token })
           );
         }
-        alert(result.message);
+        toast.success(result.message);
         setSignUpOpen(false);
       } else {
-        alert("Registration failed");
+        toast.error("Registration failed");
       }
     } catch (error) {
-      alert("Error: " + (error.data?.message || error.message));
+      toast.error("Error: " + (error.data?.message || error.message));
     }
   };
 
@@ -51,10 +52,10 @@ const Navbar = ({ activeNav, setActiveNav }) => {
         "auth",
         JSON.stringify({ access: result.data.token })
       );
-      alert(result.message);
+      toast.success(result.message);
       setSignInOpen(false);
     } catch (error) {
-      alert("Error: " + (error.data?.message || error.message));
+      toast.error("Error: " + (error.data?.message || error.message));
     }
   };
 
@@ -185,9 +186,17 @@ const Navbar = ({ activeNav, setActiveNav }) => {
 
               <button
                 type="submit"
-                className="w-full mt-2 bg-[#FF6A1A] text-white p-2.5 rounded font-semibold hover:bg-[#e55a0a] transition-colors"
+                disabled={loginLoading}
+                className="w-full mt-2 bg-[#FF6A1A] text-white p-2.5 rounded font-semibold hover:bg-[#e55a0a] transition-colors disabled:opacity-50"
               >
-                Login
+                {loginLoading ? (
+                  <>
+                    <Loader2 className="inline animate-spin mr-2" size={18} />
+                    Logging in...
+                  </>
+                ) : (
+                  "Login"
+                )}
               </button>
             </form>
 
@@ -315,9 +324,17 @@ const Navbar = ({ activeNav, setActiveNav }) => {
 
               <button
                 type="submit"
-                className="w-full bg-[#FF6A1A] text-white p-2 mt-4 rounded font-semibold"
+                disabled={registerLoading}
+                className="w-full bg-[#FF6A1A] text-white p-2 mt-4 rounded font-semibold disabled:opacity-50"
               >
-                Register
+                {registerLoading ? (
+                  <>
+                    <Loader2 className="inline animate-spin mr-2" size={18} />
+                    Registering...
+                  </>
+                ) : (
+                  "Register"
+                )}
               </button>
             </form>
             <div className="mt-6">

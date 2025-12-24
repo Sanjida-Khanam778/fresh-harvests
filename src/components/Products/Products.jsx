@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Products() {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -70,9 +71,10 @@ export default function Products() {
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {products.map((product) => (
-            <div
+            <Link
               key={product.id}
-              className="bg-gray-50 rounded-lg p-6 text-center hover:shadow-lg transition-shadow"
+              to={`/product/${product.id}`}
+              className="bg-gray-50 rounded-lg p-6 text-center hover:shadow-lg transition-shadow block"
             >
               {/* Product Image */}
               <div className="mb-4 flex justify-center">
@@ -92,10 +94,13 @@ export default function Products() {
               <p className="text-gray-600 font-medium mb-4">{product.price}</p>
 
               {/* Add to Cart Button */}
-              <button className="w-full py-2 px-4 border text-gray-700 rounded font-medium transition-colors hover:bg-orange-500 hover:text-white">
+              <button
+                onClick={(e) => e.stopPropagation()}
+                className="w-full py-2 px-4 border text-gray-700 rounded font-medium transition-colors hover:bg-orange-500 hover:text-white"
+              >
                 Add to cart
               </button>
-            </div>
+            </Link>
           ))}
         </div>
 
