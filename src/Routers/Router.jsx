@@ -4,7 +4,6 @@ import Home from "../Pages/Home/Home";
 import Shop from "../Pages/Shop/Shop";
 import ProductDetails from "../components/ProductDetails/ProductDetails";
 import AdminLayout from "../Admin/AdminLayout";
-import AdminLogin from "../Admin/Login/AdminLogin";
 import AllProducts from "../Admin/Products/AllProducts";
 import AddProducts from "../Admin/Products/Add/AddProducts";
 import Users from "../Admin/User/Users";
@@ -31,6 +30,10 @@ export const router = createBrowserRouter([
         path: "about",
         element: <h1>About</h1>,
       },
+      {
+        path: "blog",
+        element: <h1>Blog</h1>,
+      },
     ],
   },
   {
@@ -38,7 +41,11 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <AdminLogin />,
+        element: (
+          <AdminLayout>
+            <AllProducts />
+          </AdminLayout>
+        ),
       },
       {
         path: "products",

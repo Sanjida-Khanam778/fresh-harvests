@@ -3,17 +3,9 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const baseQuery = fetchBaseQuery({
   baseUrl: "/api",
   prepareHeaders: (headers, { getState }) => {
-    // Retrieve from local storage
-    const authData = localStorage.getItem("auth");
-    if (authData) {
-      try {
-        const parsed = JSON.parse(authData);
-        if (parsed?.access) {
-          headers.set("authorization", `Bearer ${parsed.access}`);
-        }
-      } catch (e) {
-        // Ignore parsing errors
-      }
+    const token = getState().auth.token;
+    if (token) {
+      headers.set("authorization", `Bearer ${token}`);
     }
     return headers;
   },

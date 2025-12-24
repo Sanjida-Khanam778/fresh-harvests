@@ -11,7 +11,7 @@ const Banner = () => {
   const [activeNav, setActiveNav] = useState("Home");
   return (
     <section
-      className="relative w-full px-6 bg-gradient-to-br from-gray-50 to-white"
+      className="relative w-full bg-gradient-to-br from-gray-50 to-white"
       style={{
         backgroundImage: `url(${banner})`,
         backgroundSize: "cover",

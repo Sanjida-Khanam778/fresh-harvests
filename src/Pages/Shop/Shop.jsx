@@ -34,7 +34,7 @@ export default function Shop() {
           <span className="text-primary bg-primary/10 px-4 py-1 rounded-lg font-medium text-sm w-fit">
             Our Shop
           </span>
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl xl:text-5xl font-medium text-gray-900 my-4">
             All Our Products
           </h2>
           <p className="text-gray-600 text-sm">

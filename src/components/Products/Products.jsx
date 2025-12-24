@@ -32,21 +32,21 @@ export default function Products() {
     <section className="w-full py-16 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-6">
           <span className="text-primary bg-primary/10 px-4 py-1 rounded-lg font-medium text-sm w-fit">
             Our Products
           </span>
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl xl:text-5xl font-medium text-gray-900 my-4">
             Our Fresh Products
           </h2>
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-600 text-sm w-2/5 mx-auto">
             We pride ourselves on offering a wide variety of fresh and flavorful
             fruits, vegetables, and salad ingredients.
           </p>
         </div>
 
         {/* Category Filter */}
-        <div className="flex justify-center gap-3 mb-12 flex-wrap">
+        <div className="flex justify-center gap-3 mb-10 flex-wrap">
           {categories.map((category) => (
             <button
               key={category}
@@ -54,7 +54,7 @@ export default function Products() {
               className={`px-6 py-2 rounded font-medium transition-colors ${
                 activeCategory === category
                   ? "bg-primary text-white"
-                  : "border text-gray-700 hover:bg-gray-200"
+                  : "border text-[#A6A6A6]"
               }`}
             >
               {category}
@@ -68,10 +68,10 @@ export default function Products() {
             <Link
               key={product.id}
               to={`/product/${product.id}`}
-              className="shadow-md rounded-lg p-6 text-center block"
+              className="shadow-md rounded-lg p-3 text-center block"
             >
               {/* Product Image */}
-              <div className="mb-4 bg-[#F4F6F6] p-4 flex justify-center">
+              <div className="mb-4 bg-[#F4F6F6] rounded-lg p-4 flex justify-center">
                 <img
                   src={product.images[0] || "/placeholder.svg"}
                   alt={product.productName}

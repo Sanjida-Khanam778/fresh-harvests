@@ -1,17 +1,15 @@
-import { Link, useLocation } from "react-router-dom";
-import {
-  LayoutDashboard,
-  Package,
-  Users,
-  PlusCircle,
-  LogOut,
-} from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Package, Users, PlusCircle, LogOut } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { logout } from "../Stores/authSlice";
+import toast from "react-hot-toast";
 import logo from "../assets/images/navlogo.png";
 export default function AdminSidebar() {
   const location = useLocation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const menuItems = [
- 
     {
       name: "All Products",
       path: "/admin/products",
@@ -59,7 +57,14 @@ export default function AdminSidebar() {
         </div>
 
         <div className="absolute bottom-4 left-4 right-4">
-          <button className="flex items-center w-full px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+          <button
+            onClick={() => {
+              dispatch(logout());
+              toast.success("Logged out successfully!");
+              navigate("/");
+            }}
+            className="flex items-center w-full px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+          >
             <LogOut className="w-5 h-5 mr-3" />
             Logout
           </button>

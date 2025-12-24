@@ -1,8 +1,10 @@
 import { Eye, EyeOff, X, Loader2, Menu } from "lucide-react";
 import logo from "../../assets/images/navlogo.png";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLoginMutation, useRegisterMutation } from "../../Api/api";
+import { useSelector, useDispatch } from "react-redux";
+import { login, logout } from "../../Stores/authSlice";
 import toast from "react-hot-toast";
 import { IoMdCart } from "react-icons/io";
 import { FaHeart } from "react-icons/fa";
@@ -10,13 +12,27 @@ const Navbar = ({ activeNav, setActiveNav }) => {
   const location = useLocation();
   const navItems = ["Home", "Shop", "About Us", "Blog"];
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const [signInOpen, setSignInOpen] = useState(false);
   const [signUpOpen, setSignUpOpen] = useState(false);
   const [showSignInPassword, setShowSignInPassword] = useState(false);
   const [showSignUpPassword, setShowSignUpPassword] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [login, { isLoading: loginLoading }] = useLoginMutation();
+  const [loginMutation, { isLoading: loginLoading }] = useLoginMutation();
   const [registerUser, { isLoading: registerLoading }] = useRegisterMutation();
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      setActiveNav("Home");
+    } else if (location.pathname === "/shop") {
+      setActiveNav("Shop");
+    } else if (location.pathname.startsWith("/product/")) {
+      // For product details, maybe don't set active nav, or set to Shop
+      setActiveNav("Shop");
+    }
+    // Add more conditions for other routes if needed
+  }, [location.pathname, setActiveNav]);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -29,12 +45,6 @@ const Navbar = ({ activeNav, setActiveNav }) => {
     try {
       const result = await registerUser(data).unwrap();
       if (result.success) {
-        if (result.data.token) {
-          localStorage.setItem(
-            "auth",
-            JSON.stringify({ access: result.data.token })
-          );
-        }
         toast.success(result.message);
         setSignUpOpen(false);
       } else {
@@ -52,17 +62,35 @@ const Navbar = ({ activeNav, setActiveNav }) => {
       email: formData.get("email"),
       password: formData.get("password"),
     };
-    try {
-      const result = await login(data).unwrap();
-      localStorage.setItem(
-        "auth",
-        JSON.stringify({ access: result.data.token })
-      );
-      toast.success(result.message);
+
+    // Check for admin credentials
+    if (data.email === "admin@gmail.com" && data.password === "123456") {
+      // Simulate admin login - store a fake token or just redirect
+      dispatch(login({ token: "admin-token", user: { role: "admin" } }));
+      toast.success("Admin login successful!");
       setSignInOpen(false);
+      navigate("/admin/products");
+      return;
+    }
+
+    try {
+      const result = await loginMutation(data).unwrap();
+      if (result.success) {
+        dispatch(login({ token: result.data.token, user: result.data }));
+        toast.success(result.message);
+        setSignInOpen(false);
+      } else {
+        toast.error("Login failed");
+      }
     } catch (error) {
       toast.error("Error: " + (error.data?.message || error.message));
     }
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    toast.success("Logged out successfully!");
+    navigate("/");
   };
 
   const handleNavClick = (item) => {
@@ -71,6 +99,10 @@ const Navbar = ({ activeNav, setActiveNav }) => {
       navigate("/");
     } else if (item === "Shop") {
       navigate("/shop");
+    } else if (item === "About Us") {
+      navigate("/about");
+    } else if (item === "Blog") {
+      navigate("/blog");
     }
   };
 
@@ -130,10 +162,16 @@ const Navbar = ({ activeNav, setActiveNav }) => {
               Cart
             </button>
             <button
-              className={`border border-white text-white px-6 py-2 rounded-md  text-sm font-medium transition-colors`}
-              onClick={() => setSignInOpen(true)}
+              className={` ${
+                location.pathname === "/"
+                  ? "border border-white text-white"
+                  : "border border-primary text-primary"
+              } px-6 py-2 rounded-md  text-sm font-medium transition-colors`}
+              onClick={
+                isAuthenticated ? handleLogout : () => setSignInOpen(true)
+              }
             >
-              Sign In
+              {isAuthenticated ? "Logout" : "Sign In"}
             </button>
           </div>
           <button className="md:hidden text-gray-700 text-xl">🛒</button>
@@ -187,10 +225,14 @@ const Navbar = ({ activeNav, setActiveNav }) => {
                 className="block w-full text-left py-2 px-4 border border-gray-300 rounded mt-4"
                 onClick={() => {
                   setMenuOpen(false);
-                  setSignInOpen(true);
+                  if (isAuthenticated) {
+                    handleLogout();
+                  } else {
+                    setSignInOpen(true);
+                  }
                 }}
               >
-                Sign In
+                {isAuthenticated ? "Logout" : "Sign In"}
               </button>
             </div>
           </div>
@@ -200,7 +242,7 @@ const Navbar = ({ activeNav, setActiveNav }) => {
       {/* Sign In Modal */}
       {signInOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60"
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           onClick={() => setSignInOpen(false)}
         >
           <div
@@ -358,7 +400,7 @@ const Navbar = ({ activeNav, setActiveNav }) => {
       {/* Sign Up Modal */}
       {signUpOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60"
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           onClick={() => setSignUpOpen(false)}
         >
           <div
