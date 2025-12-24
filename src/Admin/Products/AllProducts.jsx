@@ -1,8 +1,6 @@
-"use client"
-
-import { useState } from "react"
-import Link from "next/link"
-import { Plus, Edit, Trash2, Eye } from "lucide-react"
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Plus, Edit, Trash2, Eye } from "lucide-react";
 
 export default function AllProducts() {
   const [products] = useState([
@@ -36,18 +34,18 @@ export default function AllProducts() {
       stock: 80,
       image: "/placeholder.svg?height=50&width=50",
     },
-  ])
+  ]);
 
   const handleDelete = (id) => {
-    console.log("Delete product:", id)
-  }
+    console.log("Delete product:", id);
+  };
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Products</h2>
         <Link
-          href="/admin/products/add"
+          to="/admin/products/add"
           className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
         >
           <Plus className="w-4 h-4" />
@@ -60,18 +58,35 @@ export default function AllProducts() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left p-4 font-semibold text-gray-700">Image</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Name</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Category</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Price</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Rating</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Stock</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Actions</th>
+                <th className="text-left p-4 font-semibold text-gray-700">
+                  Image
+                </th>
+                <th className="text-left p-4 font-semibold text-gray-700">
+                  Name
+                </th>
+                <th className="text-left p-4 font-semibold text-gray-700">
+                  Category
+                </th>
+                <th className="text-left p-4 font-semibold text-gray-700">
+                  Price
+                </th>
+                <th className="text-left p-4 font-semibold text-gray-700">
+                  Rating
+                </th>
+                <th className="text-left p-4 font-semibold text-gray-700">
+                  Stock
+                </th>
+                <th className="text-left p-4 font-semibold text-gray-700">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {products.map((product) => (
-                <tr key={product.id} className="border-b border-gray-100 hover:bg-gray-50">
+                <tr
+                  key={product.id}
+                  className="border-b border-gray-100 hover:bg-gray-50"
+                >
                   <td className="p-4">
                     <img
                       src={product.image || "/placeholder.svg"}
@@ -79,16 +94,23 @@ export default function AllProducts() {
                       className="w-12 h-12 rounded-lg object-cover"
                     />
                   </td>
-                  <td className="p-4 font-medium text-gray-800">{product.name}</td>
+                  <td className="p-4 font-medium text-gray-800">
+                    {product.name}
+                  </td>
                   <td className="p-4 text-gray-600">{product.category}</td>
-                  <td className="p-4 text-gray-800 font-semibold">${product.price}/kg</td>
+                  <td className="p-4 text-gray-800 font-semibold">
+                    ${product.price}/kg
+                  </td>
                   <td className="p-4 text-gray-600">
                     {product.rating} ({product.reviews})
                   </td>
                   <td className="p-4 text-gray-600">{product.stock}</td>
                   <td className="p-4">
                     <div className="flex items-center gap-2">
-                      <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="View">
+                      <button
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="View"
+                      >
                         <Eye className="w-4 h-4" />
                       </button>
                       <button
@@ -113,5 +135,5 @@ export default function AllProducts() {
         </div>
       </div>
     </div>
-  )
+  );
 }

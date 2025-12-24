@@ -2,6 +2,11 @@ import { createBrowserRouter } from "react-router-dom";
 import Layout from "../Layouts/Layout";
 import Home from "../Pages/Home/Home";
 import ProductDetails from "../components/ProductDetails/ProductDetails";
+import AdminLayout from "../Admin/AdminLayout";
+import AdminLogin from "../Admin/Login/AdminLogin";
+import AllProducts from "../Admin/Products/AllProducts";
+import AddProducts from "../Admin/Products/Add/AddProducts";
+import Users from "../Admin/User/Users";
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +25,39 @@ export const router = createBrowserRouter([
       {
         path: "about",
         element: <h1>About</h1>,
+      },
+    ],
+  },
+  {
+    path: "/admin",
+    children: [
+      {
+        index: true,
+        element: <AdminLogin />,
+      },
+      {
+        path: "products",
+        element: (
+          <AdminLayout>
+            <AllProducts />
+          </AdminLayout>
+        ),
+      },
+      {
+        path: "products/add",
+        element: (
+          <AdminLayout>
+            <AddProducts />
+          </AdminLayout>
+        ),
+      },
+      {
+        path: "users",
+        element: (
+          <AdminLayout>
+            <Users />
+          </AdminLayout>
+        ),
       },
     ],
   },

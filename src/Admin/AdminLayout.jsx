@@ -1,5 +1,5 @@
-import AdminSidebar from "@/components/admin-sidebar"
-import AdminNavbar from "@/components/admin-navbar"
+import AdminSidebar from "../components/AdminSidebar";
+import AdminNavbar from "../components/AdminNavbar";
 
 export default function AdminLayout({ children }) {
   return (
@@ -10,5 +10,5 @@ export default function AdminLayout({ children }) {
         <div className="p-6">{children}</div>
       </main>
     </div>
-  )
+  );
 }
