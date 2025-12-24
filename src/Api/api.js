@@ -1,17 +1,18 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "",
+  baseUrl: "/api",
   prepareHeaders: (headers, { getState }) => {
-    // Try to get token from Redux state
-    const token = getState().auth?.accessToken || null;
-    // If token not in state, retrieve from local storage
-    if (token) {
-      headers.set("authorization", `Bearer ${token}`);
-    } else {
-      const authData = JSON.parse(localStorage.getItem("auth")); // Parse the `auth` object from local storage
-      if (authData?.access) {
-        headers.set("authorization", `Bearer ${authData.access}`); // Set Authorization header
+    // Retrieve from local storage
+    const authData = localStorage.getItem("auth");
+    if (authData) {
+      try {
+        const parsed = JSON.parse(authData);
+        if (parsed?.access) {
+          headers.set("authorization", `Bearer ${parsed.access}`);
+        }
+      } catch (e) {
+        // Ignore parsing errors
       }
     }
     return headers;
@@ -22,5 +23,22 @@ export const api = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQuery,
   tagTypes: ["users"],
-  endpoints: () => ({}),
+  endpoints: (builder) => ({
+    login: builder.mutation({
+      query: (credentials) => ({
+        url: "/auth/login",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
+    register: builder.mutation({
+      query: (userData) => ({
+        url: "/users/register",
+        method: "POST",
+        body: userData,
+      }),
+    }),
+  }),
 });
+
+export const { useLoginMutation, useRegisterMutation } = api;
