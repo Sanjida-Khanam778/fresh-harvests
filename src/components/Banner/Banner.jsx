@@ -45,7 +45,7 @@ const Banner = () => {
             </button>
           </div>
           <div className="flex">
-            <div className="pl-24 pr-8 pt-3">
+            <div className="pl-24 pr-8 pt-3 hidden sm:block">
               <img src={arrow} alt="" />
             </div>
             <div className="bg-[#EBEBEB] rounded-xl flex p-6 gap-6 font-medium">

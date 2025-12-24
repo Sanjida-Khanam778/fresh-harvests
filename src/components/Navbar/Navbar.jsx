@@ -1,14 +1,20 @@
-import { Eye, EyeOff, X, Loader2 } from "lucide-react";
+import { Eye, EyeOff, X, Loader2, Menu } from "lucide-react";
 import logo from "../../assets/images/navlogo.png";
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useLoginMutation, useRegisterMutation } from "../../Api/api";
 import toast from "react-hot-toast";
+import { IoMdCart } from "react-icons/io";
+import { FaHeart } from "react-icons/fa";
 const Navbar = ({ activeNav, setActiveNav }) => {
+  const location = useLocation();
   const navItems = ["Home", "Shop", "About Us", "Blog"];
+  const navigate = useNavigate();
   const [signInOpen, setSignInOpen] = useState(false);
   const [signUpOpen, setSignUpOpen] = useState(false);
   const [showSignInPassword, setShowSignInPassword] = useState(false);
   const [showSignUpPassword, setShowSignUpPassword] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [login, { isLoading: loginLoading }] = useLoginMutation();
   const [registerUser, { isLoading: registerLoading }] = useRegisterMutation();
 
@@ -61,6 +67,9 @@ const Navbar = ({ activeNav, setActiveNav }) => {
 
   const handleNavClick = (item) => {
     setActiveNav(item);
+    if (item === "Home") {
+      navigate("/");
+    }
   };
 
   return (
@@ -72,7 +81,7 @@ const Navbar = ({ activeNav, setActiveNav }) => {
         </div>
 
         {/* Center Navigation */}
-        <div className="flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-8">
           {navItems.map((item) => (
             <button
               key={item}
@@ -93,20 +102,98 @@ const Navbar = ({ activeNav, setActiveNav }) => {
 
         {/* Right Actions */}
         <div className="flex items-center gap-6">
-          <button className="text-gray-700 text-sm font-medium hover:text-green-500 transition-colors">
-            ❤️ Favorites
-          </button>
-          <button className="text-gray-700 text-sm font-medium hover:text-green-500 transition-colors">
-            🛒 Cart
-          </button>
-          <button
-            className="border border-white text-white px-6 py-2 rounded-md  text-sm font-medium transition-colors"
-            onClick={() => setSignInOpen(true)}
-          >
-            Sign In
+          <div className="hidden md:flex items-center gap-6">
+            <button
+              className={`flex ${
+                location.pathname === "/" ? "text-white" : "text-primary"
+              } items-center gap-2 text-sm font-medium hover:text-green-500 transition-colors`}
+            >
+              <FaHeart
+                className={`${
+                  location.pathname === "/" ? "text-white" : "text-primary"
+                } text-xl`}
+              />{" "}
+              Favorites
+            </button>
+            <button
+              className={`flex ${
+                location.pathname === "/" ? "text-white" : "text-primary"
+              } items-center gap-2 text-sm font-medium hover:text-green-500 transition-colors`}
+            >
+              <IoMdCart
+                className={`${
+                  location.pathname === "/" ? "text-white" : "text-primary"
+                } text-xl`}
+              />{" "}
+              Cart
+            </button>
+            <button
+              className={`border border-white text-white px-6 py-2 rounded-md  text-sm font-medium transition-colors`}
+              onClick={() => setSignInOpen(true)}
+            >
+              Sign In
+            </button>
+          </div>
+          <button className="md:hidden text-gray-700 text-xl">🛒</button>
+          <button className="md:hidden" onClick={() => setMenuOpen(true)}>
+            <Menu size={24} />
           </button>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-70 md:hidden"
+          onClick={() => setMenuOpen(false)}
+        >
+          <div
+            className="fixed top-0 right-0 w-80 h-full bg-white shadow-lg p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setMenuOpen(false)}
+              className="absolute top-4 right-4"
+            >
+              <X size={24} />
+            </button>
+            <div className="mt-12 space-y-4">
+              {navItems.map((item) => (
+                <button
+                  key={item}
+                  onClick={() => {
+                    handleNavClick(item);
+                    setMenuOpen(false);
+                  }}
+                  className={`block w-full text-left py-2 px-4 rounded font-medium ${
+                    activeNav === item
+                      ? "text-green-500 bg-green-50"
+                      : "text-gray-700"
+                  }`}
+                >
+                  {item}
+                </button>
+              ))}
+              <hr className="my-4" />
+              <button className="block w-full text-left py-2 px-4 text-gray-700">
+                ❤️ Favorites
+              </button>
+              <button className="block w-full text-left py-2 px-4 text-gray-700">
+                🛒 Cart
+              </button>
+              <button
+                className="block w-full text-left py-2 px-4 border border-gray-300 rounded mt-4"
+                onClick={() => {
+                  setMenuOpen(false);
+                  setSignInOpen(true);
+                }}
+              >
+                Sign In
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Sign In Modal */}
       {signInOpen && (
