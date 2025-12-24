@@ -1,25 +1,69 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Upload, X } from "lucide-react";
+import {
+  usePublicGetCategoriesQuery,
+  usePublicCreateCategoryMutation,
+  useCreateProductMutation,
+} from "../../../Api/api";
+import toast from "react-hot-toast";
 
 export default function AddProducts() {
   const navigate = useNavigate();
-  const [images, setImages] = useState([]);
+  const [imageUrls, setImageUrls] = useState([""]);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const { data: categoriesData, isLoading: categoriesLoading } =
+    usePublicGetCategoriesQuery();
+  const [createCategory, { isLoading: createLoading }] =
+    usePublicCreateCategoryMutation();
+  const [createProduct, { isLoading: productLoading }] =
+    useCreateProductMutation();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Product added");
-    navigate("/admin/products");
+    const formData = new FormData(e.target);
+    const productData = {
+      productName: formData.get("productName"),
+      description: formData.get("description"),
+      price: parseFloat(formData.get("price")),
+      stock: parseInt(formData.get("stock")),
+      categoryId: formData.get("category"),
+      images: imageUrls.filter(url => url.trim() !== ""),
+    };
+
+    try {
+      await createProduct(productData).unwrap();
+      toast.success("Product created successfully!");
+      navigate("/admin/products");
+    } catch (error) {
+      toast.error(
+        "Failed to create product: " + (error.data?.message || error.message)
+      );
+    }
   };
 
-  const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    const newImages = files.map((file) => URL.createObjectURL(file));
-    setImages([...images, ...newImages]);
+  const addImageUrl = () => {
+    setImageUrls([...imageUrls, ""]);
   };
 
-  const removeImage = (index) => {
-    setImages(images.filter((_, i) => i !== index));
+  const updateImageUrl = (index, value) => {
+    const newUrls = [...imageUrls];
+    newUrls[index] = value;
+    setImageUrls(newUrls);
+  };
+
+  const removeImageUrl = (index) => {
+    setImageUrls(imageUrls.filter((_, i) => i !== index));
+  };
+
+  const handleAddCategory = async () => {
+    if (newCategoryName.trim()) {
+      try {
+        await createCategory({ categoryName: newCategoryName }).unwrap();
+        setNewCategoryName("");
+      } catch (error) {
+        console.error("Failed to create category:", error);
+      }
+    }
   };
 
   return (
@@ -42,6 +86,7 @@ export default function AddProducts() {
                 type="text"
                 required
                 placeholder="Enter product name"
+                name="productName"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
@@ -52,14 +97,33 @@ export default function AddProducts() {
               </label>
               <select
                 required
+                name="category"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               >
                 <option value="">Select category</option>
-                <option value="fruits">Fruits</option>
-                <option value="vegetables">Vegetables</option>
-                <option value="dairy">Dairy</option>
-                <option value="grains">Grains</option>
+                {categoriesData?.data?.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.categoryName}
+                  </option>
+                ))}
               </select>
+              {/* <div className="mt-2 flex gap-2">
+                <input
+                  type="text"
+                  placeholder="New category name"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  className="flex-1 px-3 py-1 border border-gray-300 rounded text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddCategory}
+                  disabled={createLoading || !newCategoryName.trim()}
+                  className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 disabled:opacity-50"
+                >
+                  {createLoading ? "Adding..." : "Add"}
+                </button>
+              </div> */}
             </div>
 
             <div>
@@ -71,6 +135,7 @@ export default function AddProducts() {
                 step="0.1"
                 required
                 placeholder="0.00"
+                name="price"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
@@ -83,6 +148,7 @@ export default function AddProducts() {
                 type="number"
                 required
                 placeholder="0"
+                name="stock"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
@@ -121,53 +187,42 @@ export default function AddProducts() {
               rows="4"
               required
               placeholder="Enter product description"
+              name="description"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             ></textarea>
           </div>
 
           <div className="mt-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Product Images
+              Product Images (URLs)
             </label>
-
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-              <input
-                type="file"
-                id="image-upload"
-                multiple
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-              />
-              <label htmlFor="image-upload" className="cursor-pointer">
-                <Upload className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                <p className="text-gray-600">Click to upload images</p>
-                <p className="text-sm text-gray-400 mt-1">
-                  PNG, JPG up to 10MB
-                </p>
-              </label>
-            </div>
-
-            {images.length > 0 && (
-              <div className="grid grid-cols-4 gap-4 mt-4">
-                {images.map((image, index) => (
-                  <div key={index} className="relative">
-                    <img
-                      src={image || "/placeholder.svg"}
-                      alt={`Upload ${index + 1}`}
-                      className="w-full h-24 object-cover rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeImage(index)}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
+            {imageUrls.map((url, index) => (
+              <div key={index} className="flex gap-2 mb-2">
+                <input
+                  type="url"
+                  placeholder="Enter image URL"
+                  value={url}
+                  onChange={(e) => updateImageUrl(index, e.target.value)}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+                {imageUrls.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeImageUrl(index)}
+                    className="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                  >
+                    Remove
+                  </button>
+                )}
               </div>
-            )}
+            ))}
+            <button
+              type="button"
+              onClick={addImageUrl}
+              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Add Another Image
+            </button>
           </div>
 
           <div className="flex gap-4 mt-8">

@@ -1,5 +1,43 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+const publicBaseQuery = fetchBaseQuery({
+  baseUrl: "/api",
+});
+
+export const publicApi = createApi({
+  reducerPath: "publicApi",
+  baseQuery: publicBaseQuery,
+  tagTypes: ["categories"],
+  endpoints: (builder) => ({
+    getCategories: builder.query({
+      query: () => "category",
+      providesTags: ["categories"],
+    }),
+    createCategory: builder.mutation({
+      query: (data) => ({
+        url: "category",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["categories"],
+    }),
+    createProduct: builder.mutation({
+      query: (data) => ({
+        url: "products",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["products"],
+    }),
+  }),
+});
+
+export const {
+  useGetCategoriesQuery: usePublicGetCategoriesQuery,
+  useCreateCategoryMutation: usePublicCreateCategoryMutation,
+  useCreateProductMutation: usePublicCreateProductMutation,
+} = publicApi;
+
 const baseQuery = fetchBaseQuery({
   baseUrl: "/api",
   prepareHeaders: (headers, { getState }) => {
@@ -42,6 +80,14 @@ export const api = createApi({
       query: (id) => `products/${id}`,
       providesTags: ["products"],
     }),
+    createProduct: builder.mutation({
+      query: (data) => ({
+        url: "products",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["products"],
+    }),
   }),
 });
 
@@ -51,4 +97,5 @@ export const {
   useGetUsersQuery,
   useGetProductsQuery,
   useGetProductQuery,
+  useCreateProductMutation,
 } = api;

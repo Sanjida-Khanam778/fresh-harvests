@@ -63,22 +63,15 @@ const Navbar = ({ activeNav, setActiveNav }) => {
       password: formData.get("password"),
     };
 
-    // Check for admin credentials
-    if (data.email === "admin@gmail.com" && data.password === "123456") {
-      // Simulate admin login - store a fake token or just redirect
-      dispatch(login({ token: "admin-token", user: { role: "admin" } }));
-      toast.success("Admin login successful!");
-      setSignInOpen(false);
-      navigate("/admin/products");
-      return;
-    }
-
     try {
       const result = await loginMutation(data).unwrap();
       if (result.success) {
         dispatch(login({ token: result.data.token, user: result.data }));
         toast.success(result.message);
         setSignInOpen(false);
+        if (data.email === "admin@gmail.com" || result.data.role === "admin") {
+          navigate("/admin/products");
+        }
       } else {
         toast.error("Login failed");
       }

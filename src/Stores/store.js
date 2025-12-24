@@ -2,7 +2,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 
 import storage from "redux-persist/lib/storage";
-import { api } from "../Api/api";
+import { api, publicApi } from "../Api/api";
 import authReducer from "./authSlice";
 
 const persistConfig = {
@@ -12,6 +12,7 @@ const persistConfig = {
 };
 const rootReducer = combineReducers({
   [api.reducerPath]: api.reducer,
+  [publicApi.reducerPath]: publicApi.reducer,
   auth: authReducer,
 });
 
@@ -25,7 +26,7 @@ export const store = configureStore({
         ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
         ignoredActionPaths: ["register", "rehydrate"],
       },
-    }).concat(api.middleware),
+    }).concat(api.middleware, publicApi.middleware),
 });
 
 export const parsistor = persistStore(store);
