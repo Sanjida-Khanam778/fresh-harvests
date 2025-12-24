@@ -22,7 +22,7 @@ const baseQuery = fetchBaseQuery({
 export const api = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQuery,
-  tagTypes: ["users"],
+  tagTypes: ["users", "products"],
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials) => ({
@@ -42,7 +42,21 @@ export const api = createApi({
       query: () => "users",
       providesTags: ["users"],
     }),
+    getProducts: builder.query({
+      query: () => "products",
+      providesTags: ["products"],
+    }),
+    getProduct: builder.query({
+      query: (id) => `products/${id}`,
+      providesTags: ["products"],
+    }),
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation, useGetUsersQuery } = api;
+export const {
+  useLoginMutation,
+  useRegisterMutation,
+  useGetUsersQuery,
+  useGetProductsQuery,
+  useGetProductQuery,
+} = api;

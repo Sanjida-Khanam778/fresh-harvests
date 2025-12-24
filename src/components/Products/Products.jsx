@@ -1,38 +1,30 @@
-"use client";
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useGetProductsQuery } from "../../Api/api";
 
 export default function Products() {
   const [activeCategory, setActiveCategory] = useState("All");
+  const { data, error, isLoading } = useGetProductsQuery();
 
   const categories = ["All", "Fruits", "Vegetables", "Salad"];
 
-  const products = [
-    {
-      id: 1,
-      name: "Mushroom",
-      price: "$2.3/kg",
-      image: "/forest-floor-mushrooms.png",
-    },
-    { id: 2, name: "Mustard", price: "$1.3/kg", image: "/mustard-leaves.jpg" },
-    { id: 3, name: "Orange", price: "$4.2/kg", image: "/orange-citrus.jpg" },
-    {
-      id: 4,
-      name: "Pomegranate",
-      price: "$11.2/kg",
-      image: "/ripe-pomegranate.png",
-    },
-    { id: 5, name: "Kiwi", price: "$5.3/kg", image: "/kiwi-fruit.png" },
-    { id: 6, name: "Coconut", price: "$6.3/kg", image: "/coconut.jpg" },
-    { id: 7, name: "Guava", price: "$2.2/kg", image: "/guava.jpg" },
-    {
-      id: 8,
-      name: "Eggplant",
-      price: "$1.2/kg",
-      image: "/single-ripe-eggplant.png",
-    },
-  ];
+  if (isLoading)
+    return <div className="text-center py-16">Loading products...</div>;
+  if (error)
+    return <div className="text-center py-16">Error loading products</div>;
+
+  const products = data?.data || [];
+
+  const filteredProducts =
+    activeCategory === "All"
+      ? products
+      : products.filter((product) => {
+          const catName = product.category.categoryName.toLowerCase();
+          if (activeCategory === "Fruits") return catName === "fruits";
+          if (activeCategory === "Vegetables") return catName === "vegetable";
+          if (activeCategory === "Salad") return catName === "salad";
+          return false;
+        });
 
   return (
     <section className="w-full py-16 px-4 bg-white">
@@ -70,7 +62,7 @@ export default function Products() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <Link
               key={product.id}
               to={`/product/${product.id}`}
@@ -79,19 +71,21 @@ export default function Products() {
               {/* Product Image */}
               <div className="mb-4 flex justify-center">
                 <img
-                  src={product.image || "/placeholder.svg"}
-                  alt={product.name}
+                  src={product.images[0] || "/placeholder.svg"}
+                  alt={product.productName}
                   className="h-40 w-40 object-cover rounded"
                 />
               </div>
 
               {/* Product Name */}
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {product.name}
+                {product.productName}
               </h3>
 
               {/* Price */}
-              <p className="text-gray-600 font-medium mb-4">{product.price}</p>
+              <p className="text-gray-600 font-medium mb-4">
+                ${product.price}/kg
+              </p>
 
               {/* Add to Cart Button */}
               <button

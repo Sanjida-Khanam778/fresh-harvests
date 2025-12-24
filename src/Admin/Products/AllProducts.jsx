@@ -1,44 +1,19 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Plus, Edit, Trash2, Eye } from "lucide-react";
+import { useGetProductsQuery } from "../../Api/api";
 
 export default function AllProducts() {
-  const [products] = useState([
-    {
-      id: 1,
-      name: "Coconut",
-      category: "Fruits",
-      price: 6.3,
-      rating: 5.0,
-      reviews: 1,
-      stock: 50,
-      image: "/coconut-1.jpg",
-    },
-    {
-      id: 2,
-      name: "Fresh Tomatoes",
-      category: "Vegetables",
-      price: 4.5,
-      rating: 4.8,
-      reviews: 15,
-      stock: 120,
-      image: "/placeholder.svg?height=50&width=50",
-    },
-    {
-      id: 3,
-      name: "Organic Broccoli",
-      category: "Vegetables",
-      price: 3.2,
-      rating: 4.9,
-      reviews: 8,
-      stock: 80,
-      image: "/placeholder.svg?height=50&width=50",
-    },
-  ]);
+  const { data, error, isLoading } = useGetProductsQuery();
 
   const handleDelete = (id) => {
     console.log("Delete product:", id);
   };
+
+  if (isLoading) return <div>Loading products...</div>;
+  if (error) return <div>Error loading products</div>;
+
+  const products = data?.data || [];
 
   return (
     <div>
@@ -70,9 +45,7 @@ export default function AllProducts() {
                 <th className="text-left p-4 font-semibold text-gray-700">
                   Price
                 </th>
-                <th className="text-left p-4 font-semibold text-gray-700">
-                  Rating
-                </th>
+
                 <th className="text-left p-4 font-semibold text-gray-700">
                   Stock
                 </th>
@@ -89,21 +62,21 @@ export default function AllProducts() {
                 >
                   <td className="p-4">
                     <img
-                      src={product.image || "/placeholder.svg"}
-                      alt={product.name}
+                      src={product.images[0] || "/placeholder.svg"}
+                      alt={product.productName}
                       className="w-12 h-12 rounded-lg object-cover"
                     />
                   </td>
                   <td className="p-4 font-medium text-gray-800">
-                    {product.name}
+                    {product.productName}
                   </td>
-                  <td className="p-4 text-gray-600">{product.category}</td>
+                  <td className="p-4 text-gray-600">
+                    {product.category.categoryName}
+                  </td>
                   <td className="p-4 text-gray-800 font-semibold">
                     ${product.price}/kg
                   </td>
-                  <td className="p-4 text-gray-600">
-                    {product.rating} ({product.reviews})
-                  </td>
+
                   <td className="p-4 text-gray-600">{product.stock}</td>
                   <td className="p-4">
                     <div className="flex items-center gap-2">

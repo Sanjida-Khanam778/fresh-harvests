@@ -1,16 +1,35 @@
-"use client";
-
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Heart, ShoppingCart, Minus, Plus } from "lucide-react";
-import slider from "../../assets/images/slider.png";
 import { FaHeart } from "react-icons/fa";
+import { useGetProductQuery } from "../../Api/api";
+
 export default function ProductDetails() {
+  const { id } = useParams();
+  const { data, error, isLoading } = useGetProductQuery(id);
   const [currentImage, setCurrentImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
 
-  // Placeholder images - you can replace these with your actual product images
-  const productImages = [slider, slider, slider];
+  const product = data?.data;
+  const productImages = product?.images || [];
+  const reviews = product?.reviews || [];
+  const averageRating = reviews.length > 0 
+    ? reviews.reduce((sum, review) => sum + (review.rating || 0), 0) / reviews.length 
+    : 0;
+
+  useEffect(() => {
+    if (productImages.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentImage((prev) => (prev + 1) % productImages.length);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [productImages.length]);
+
+  if (isLoading) return <div className="text-center py-16">Loading product...</div>;
+  if (error) return <div className="text-center py-16">Error loading product</div>;
+  if (!product) return <div className="text-center py-16">Product not found</div>;
 
   const decreaseQuantity = () => {
     if (quantity > 1) {
@@ -22,13 +41,6 @@ export default function ProductDetails() {
     setQuantity(quantity + 1);
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImage((prev) => (prev + 1) % productImages.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [productImages.length]);
-
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="grid md:grid-cols-2 gap-8 mb-8">
@@ -37,7 +49,7 @@ export default function ProductDetails() {
           <div className="relative aspect-square mb-4">
             <img
               src={productImages[currentImage] || "/placeholder.svg"}
-              alt="Coconut"
+              alt={product.productName}
               className="w-full h-full object-contain"
             />
           </div>
@@ -61,16 +73,16 @@ export default function ProductDetails() {
           <div>
             {" "}
             <span className="text-primary bg-primary/10 px-4 py-1 rounded-lg font-medium text-sm w-fit">
-              Fruits
+              {product.category.categoryName}
             </span>
-            <h1 className="text-4xl font-bold text-gray-900 my-3">Coconut</h1>
+            <h1 className="text-4xl font-bold text-gray-900 my-3">{product.productName}</h1>
             {/* Rating */}
             <div className="flex items-center gap-2 mb-3">
               <div className="flex">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <svg
                     key={star}
-                    className="w-5 h-5 fill-orange-400"
+                    className={`w-5 h-5 ${star <= averageRating ? 'fill-orange-400' : 'fill-gray-300'}`}
                     viewBox="0 0 20 20"
                   >
                     <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
@@ -78,16 +90,12 @@ export default function ProductDetails() {
                 ))}
               </div>
               <span className="text-sm font-medium text-gray-900">
-                5.0 (1 review)
+                {averageRating.toFixed(1)} ({reviews.length} review{reviews.length !== 1 ? 's' : ''})
               </span>
             </div>
-            <p className="text-3xl font-bold text-orange-500 mb-4">$6.3/kg</p>
+            <p className="text-3xl font-bold text-orange-500 mb-4">${product.price}/kg</p>
             <p className="text-gray-600 leading-relaxed mb-6">
-              From our farm directly to your door, our fresh coconuts are
-              harvested at the peak of ripeness, offering you a sweet, hydrating
-              treat full of flavor. Packed with natural nutrients, coconut is
-              perfect for a variety of culinary uses, from smoothies to savory
-              dishes, or even for a refreshing drink straight from the shell.
+              {product.description}
             </p>
           </div>
 
@@ -158,7 +166,7 @@ export default function ProductDetails() {
                 : " text-[#D9D9D9] border"
             }`}
           >
-            Reviews (0)
+            Reviews ({reviews.length})
           </button>
         </div>
 
@@ -166,23 +174,12 @@ export default function ProductDetails() {
         <div className="bg-[#F4F6F6] rounded-lg p-6 max-w-5xl">
           {activeTab === "description" ? (
             <div className="space-y-4 text-gray-700">
-              <p>
-                Our coconuts are sustainably grown, ensuring the best quality
-                and taste. Each coconut is handpicked and carefully prepared,
-                offering you the freshest and purest form. Rich in healthy fats,
-                electrolytes, and essential nutrients, coconuts provide both
-                hydration and nourishment. Whether you're using the water,
-                flesh, or milk, our coconuts bring versatility to your kitchen
-                while supporting healthy living.
-              </p>
-              <p>
-                Perfect for smoothies, desserts, curries and more — let the
-                natural sweetness of the coconut elevate your recipes. Enjoy the
-                tropical goodness in its purest form, directly from nature.
-              </p>
+              <p>{product.description}</p>
             </div>
           ) : (
-            <div className="text-center text-gray-500 py-8">No reviews yet</div>
+            <div className="text-center text-gray-500 py-8">
+              {reviews.length === 0 ? "No reviews yet" : "Reviews coming soon"}
+            </div>
           )}
         </div>
       </div>
