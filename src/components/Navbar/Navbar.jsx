@@ -45,6 +45,8 @@ const Navbar = ({ activeNav, setActiveNav }) => {
     try {
       const result = await registerUser(data).unwrap();
       if (result.success) {
+        dispatch(login({ token: result.data.token, user: result.data }));
+
         toast.success(result.message);
         setSignUpOpen(false);
       } else {
@@ -103,22 +105,21 @@ const Navbar = ({ activeNav, setActiveNav }) => {
     <nav className="py-8 z-50">
       <div className="w-10/12 mx-auto flex items-center justify-between">
         {/* Logo */}
-      <Link to="/">
-        <div className="flex items-center gap-2">
-          <img src={logo} className="h-8" alt="" />
-        </div>
-      </Link>
+        <Link to="/">
+          <div className="flex items-center gap-2">
+            <img src={logo} className="h-8" alt="" />
+          </div>
+        </Link>
         {/* Center Navigation */}
         <div className="hidden md:flex items-center gap-8">
           {navItems.map((item) => (
             <button
               key={item}
               onClick={() => handleNavClick(item)}
-              className={`relative font-medium text-sm transition-colors hover:text-primary pb-1 ${
-                activeNav === item
-                  ? "text-green-500"
-                  : "text-gray-700 hover:text-green-500"
-              }`}
+              className={`relative font-medium text-sm transition-colors hover:text-primary pb-1 ${activeNav === item
+                ? "text-green-500"
+                : "text-gray-700 hover:text-green-500"
+                }`}
             >
               {item}
               {activeNav === item && (
@@ -132,35 +133,30 @@ const Navbar = ({ activeNav, setActiveNav }) => {
         <div className="flex items-center gap-6">
           <div className="hidden md:flex items-center gap-6">
             <button
-              className={`flex ${
-                location.pathname === "/" ? "text-white" : "text-primary"
-              } items-center gap-2 text-sm font-medium hover:text-green-500 transition-colors`}
+              className={`flex ${location.pathname === "/" ? "text-white" : "text-primary"
+                } items-center gap-2 text-sm font-medium hover:text-green-500 transition-colors`}
             >
               <FaHeart
-                className={`${
-                  location.pathname === "/" ? "text-white" : "text-primary"
-                } text-xl`}
+                className={`${location.pathname === "/" ? "text-white" : "text-primary"
+                  } text-xl`}
               />{" "}
               Favorites
             </button>
             <button
-              className={`flex ${
-                location.pathname === "/" ? "text-white" : "text-primary"
-              } items-center gap-2 text-sm font-medium hover:text-green-500 transition-colors`}
+              className={`flex ${location.pathname === "/" ? "text-white" : "text-primary"
+                } items-center gap-2 text-sm font-medium hover:text-green-500 transition-colors`}
             >
               <IoMdCart
-                className={`${
-                  location.pathname === "/" ? "text-white" : "text-primary"
-                } text-xl`}
+                className={`${location.pathname === "/" ? "text-white" : "text-primary"
+                  } text-xl`}
               />{" "}
               Cart
             </button>
             <button
-              className={` ${
-                location.pathname === "/"
-                  ? "border border-white text-white"
-                  : "border border-primary text-primary"
-              } px-6 py-2 rounded-md  text-sm font-medium transition-colors`}
+              className={` ${location.pathname === "/"
+                ? "border border-white text-white"
+                : "border border-primary text-primary"
+                } px-6 py-2 rounded-md  text-sm font-medium transition-colors`}
               onClick={
                 isAuthenticated ? handleLogout : () => setSignInOpen(true)
               }
@@ -199,11 +195,10 @@ const Navbar = ({ activeNav, setActiveNav }) => {
                     handleNavClick(item);
                     setMenuOpen(false);
                   }}
-                  className={`block w-full text-left py-2 px-4 rounded font-medium ${
-                    activeNav === item
-                      ? "text-green-500 bg-green-50"
-                      : "text-gray-700"
-                  }`}
+                  className={`block w-full text-left py-2 px-4 rounded font-medium ${activeNav === item
+                    ? "text-green-500 bg-green-50"
+                    : "text-gray-700"
+                    }`}
                 >
                   {item}
                 </button>
