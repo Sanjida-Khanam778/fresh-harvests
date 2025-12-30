@@ -7,6 +7,8 @@ import AdminLayout from "../Admin/AdminLayout";
 import AllProducts from "../Admin/Products/AllProducts";
 import AddProducts from "../Admin/Products/Add/AddProducts";
 import Users from "../Admin/User/Users";
+import About from "../components/About/About";
+import Blog from "../components/Blog/Blog";
 
 export const router = createBrowserRouter([
   {
@@ -28,11 +30,12 @@ export const router = createBrowserRouter([
       },
       {
         path: "about",
-        element: <h1>About</h1>,
+        element: <About />,
       },
+     
       {
         path: "blog",
-        element: <h1>Blog</h1>,
+        element: <Blog />,
       },
     ],
   },
